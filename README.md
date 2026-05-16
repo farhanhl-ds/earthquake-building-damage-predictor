@@ -6,13 +6,24 @@ Multiclass classification model to predict earthquake building damage grade usin
 ## Repository Outline
 
 ```
-1. modeling.ipynb - Main modeling notebook: EDA, feature engineering, model training, evaluation, and saving
-2. inference.ipynb - Model inference notebook: single and batch prediction examples
-3. conceptual.txt - Answers to conceptual questions on bagging, Random Forest, and cross validation
-4. description.md - Project documentation (this file)
-5. url.txt - Links to dataset, saved model, and deployment
-6. deployment/ - Streamlit web application for model deployment
+1. modeling.ipynb      - Main modeling notebook: EDA, feature engineering, model training, evaluation, and saving
+2. inference.ipynb     - Model inference notebook: single and batch prediction examples
+3. conceptual.txt      - Answers to conceptual questions on bagging, Random Forest, and cross validation
+4. url.txt             - Links to dataset, saved model, and deployment
+5. deployment/
+   ├── src/
+   │   ├── streamlit_app.py              - Streamlit web application
+   │   ├── nepal_earthquake.jpg          - Hero image for the app
+   │   ├── label_encoder.pkl             - Label encoder for target variable
+   │   ├── best_model_earthquake.pkl     - ⚠️ Not included (347 MB) → see url.txt
+   │   └── csv_building_structure.csv    - ⚠️ Not included (155 MB) → see url.txt
+   ├── Dockerfile
+   ├── .gitattributes
+   ├── README.md
+   └── requirements.txt
 ```
+
+> ⚠️ Large files (`best_model_earthquake.pkl` and `csv_building_structure.csv`) are not tracked in this repository. Download links are available in `url.txt`.
 
 ## Problem Background
 
