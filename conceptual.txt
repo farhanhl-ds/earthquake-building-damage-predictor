@@ -1,0 +1,81 @@
+P1M2 - Conceptual Problems
+Farhan Hamid Lubis 
+Hacktiv8 Data Science Fulltime RMT-052
+
+
+1. Jelaskan latar belakang adanya bagging dan cara kerja bagging!
+
+Latar belakang:
+Sebuah model machine learning tunggal (single learner) memiliki kelemahan mendasar diamana model ini rentan terhadap variance yang tinggi, artinya performa model sangat sensitif terhadap variasi data training. Jika pada data training terdapat perubahan, hasil prediksi dapat berubah drastis yang menyebabkan model overfitting. Bagging (Bootstrap Aggregating) muncul sebagai solusi untuk mengurangi variance tersebut dengan cara melatih banyak model secara paralel dan menggabungkan hasilnya.
+
+Cara kerja bagging:
+1. Bootstrap Sampling: 
+   Dari dataset training berukuran N, dibuat beberapa subset data baru dengan cara mengambil sampel secara acak with replacement (bootstrap). Setiap subset memiliki ukuran yang sama dengan dataset asli (N), namun beberapa data poin mungkin muncul lebih dari sekali, sementara yang lain tidak muncul sama sekali.
+2. Parallel Training: 
+   Setiap subset digunakan untuk melatih satu model (base learner) secara independen dan paralel. Tidak ada interaksi antar model selama proses training.
+3. Aggregation: 
+   Melakukan prediksi menggunakan seluruh model yang telah digabungkan:
+   - Untuk klasifikasi: menggunakan majority voting (kelas yang paling banyak diprediksi menang)
+   - Untuk regresi: menggunakan rata-rata dari semua prediksi
+
+Meskipun satu model bisa salah pada data tertentu, dengan menggabungkan banyak model yang dilatih pada subset data yang berbeda-beda, kesalahan individual cenderung saling menghapus sehingga hasil akhirnya lebih stabil dan akurat. Random Forest adalah implementasi bagging yang paling populer, dengan tambahan random feature selection pada setiap split untuk meningkatkan keberagaman antar pohon.
+
+
+2. Jelaskan perbedaan cara kerja algoritma Random Forest dengan algoritma Gradient Boosting!
+
+Random Forest (Bagging-based):
+  - Melatih banyak Decision Tree secara paralel dan independen satu sama lain.
+  - Setiap pohon dilatih pada bootstrap sample yang berbeda dari data training.
+  - Pada setiap split, hanya subset fitur yang dipilih secara acak yang dipertimbangkan (biasanya sqrt(n_features) untuk klasifikasi) yang disebut random subspace method.
+  - Prediksi akhir diambil dari majority vote (klasifikasi) atau rata-rata (regresi) semua pohon.
+  - Tujuan utama untuk mengurangi variance model. Cocok untuk data dengan banyak noise dan outlier.
+  - Setiap pohon dibiarkan tumbuh dalam (fully grown), sehingga masing-masing memiliki variance tinggi namun bias rendah. Kombinasi banyak pohon menurunkan variance keseluruhan.
+
+Gradient Boosting (Boosting-based):
+- Melatih pohon secara sekuensial (berurutan), di mana setiap pohon baru belajar dari kesalahan pohon sebelumnya.
+- Dimulai dengan model awal sederhana, lalu menghitung residual error.
+- Pohon berikutnya dilatih untuk memprediksi residual tersebut, bukan target aslinya.
+- Prediksi akhir adalah penjumlahan dari semua pohon dengan learning rate sebagai pengontrol kontribusi setiap pohon
+- Tujuan utama untuk mengurangi bias model. Cocok untuk data yang bersih dan terstruktur.
+- Setiap pohon biasanya dangkal (shallow trees / weak learners) agar tidak overfit.
+- Lebih lambat karena tidak bisa diparalelkan, namun seringkali menghasilkan akurasi lebih tinggi.
+
+Ringkasan perbedaan utama:
++--------------------+----------------------+-------------------------+
+| Aspek              | Random Forest        | Gradient Boosting       |
++--------------------+----------------------+-------------------------+
+| Pendekatan         | Bagging              | Boosting                |
+| Training           | Paralel              | Sekuensial              |
+| Fokus              | Kurangi Variance     | Kurangi Bias            |
+| Kedalaman pohon    | Dalam (fully grown)  | Dangkal (weak learner)  |
+| Kecepatan training | Lebih cepat          | Lebih lambat            |
+| Ketahanan outlier  | Lebih robust         | Lebih sensitif          |
++--------------------+----------------------+-------------------------+
+
+
+3. Jelaskan apa yang dimaksud dengan Cross Validation!
+
+Cross Validation adalah teknik evaluasi model yang bertujuan mengukur seberapa baik performa model ketika dihadapkan pada data yang belum pernah dilihat sebelumnya (generalization performance). Teknik ini muncul karena evaluasi model pada satu train-test split tunggal bisa memberikan estimasi performa yang bias, tergantung pada "keberuntungan" pembagian data.
+
+Cara kerja (K-Fold Cross Validation, yang paling umum digunakan):
+1. Dataset training dibagi menjadi K bagian (fold) yang sama besar.
+2. Model dilatih sebanyak K kali. Pada iterasi ke-i:
+   - K-1 fold digunakan sebagai data training
+   - 1 fold yang tersisa digunakan sebagai data validasi
+3. Setiap iterasi menghasilkan satu skor performa (misalnya F1-score).
+4. Skor akhir adalah rata-rata dari K skor tersebut, disertai standar deviasi sebagai ukuran stabilitas.
+
+Contoh dengan K=5 (digunakan dalam proyek ini):
+  Fold 1: [VAL] [TRN] [TRN] [TRN] [TRN]
+  Fold 2: [TRN] [VAL] [TRN] [TRN] [TRN]
+  Fold 3: [TRN] [TRN] [VAL] [TRN] [TRN]
+  Fold 4: [TRN] [TRN] [TRN] [VAL] [TRN]
+  Fold 5: [TRN] [TRN] [TRN] [TRN] [VAL]
+  Final Score = mean(score_fold1, ..., score_fold5) ± std
+
+Keunggulan Cross Validation dibanding single train-test split:
+- Setiap data point digunakan sebagai data validasi tepat satu kali, sehingga estimasi performa lebih representatif dan tidak bergantung pada satu pembagian data tertentu.
+- Standar deviasi antar fold memberikan informasi tentang stabilitas model dimana standar deviasi rendah berarti model konsisten di berbagai kondisi data.
+- Mengurangi risiko overfitting yang tidak terdeteksi karena model dievaluasi pada lebih banyak variasi data.
+
+Dalam proyek ini, digunakan Stratified K-Fold (K=5) untuk memastikan proporsi setiap kelas damage grade tetap terjaga di setiap fold, mengingat distribusi kelas yang tidak seimbang.
