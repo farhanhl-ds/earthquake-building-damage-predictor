@@ -1,0 +1,3 @@
+Dataset    : https://www.kaggle.com/datasets/arashnic/earthquake-magnitude-damage-and-impact
+Model      : https://drive.google.com/drive/folders/1muXQXor_Zwul_3Vhc54OVH2_giEBxDfr?usp=sharing
+Deployment : https://huggingface.co/spaces/farhanhl-ds/earthquake-damage-predictor
